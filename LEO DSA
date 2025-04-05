@@ -1,0 +1,606 @@
+
+------------------------------------------------------------------------------------------------------------------------------EXP  1 -----
+# Import required libraries
+import tensorflow as tf
+from tensorflow.keras.datasets import fashion_mnist
+import matplotlib.pyplot as plt
+# Load the Fashion MNIST dataset
+(x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+# Normalize the datasets
+x_train, x_test = x_train / 255.0, x_test / 255.0
+# Define the model architecture
+model = tf.keras.models.Sequential([
+tf.keras.layers.Flatten(input_shape=(28, 28)),
+tf.keras.layers.Dense(128, activation='relu'), # Hidden layer
+tf.keras.layers.Dropout(0.2),
+tf.keras.layers.Dense(10, activation='softmax') # Output layer
+])
+# Compile the model
+model.compile(optimizer='adam',
+loss='sparse_categorical_crossentropy',
+metrics=['accuracy'])
+# Train the model
+model.fit(x_train, y_train, epochs=8)
+# Evaluate the model
+loss, accuracy = model.evaluate(x_test, y_test, verbose=0)
+print("\nSummary of results:")
+print(f"Loss: {loss}")
+print(f"Accuracy: {accuracy}")
+# Accuracy comparison for different configurations
+neuroacti = ["sigmoid 64", "sigmoid 128", "relu 64", "relu 128"]
+acc = [87.58, 88.22, 88.05, 89.33] # Sample accuracy for demonstration purposes
+# Create a bar graph
+plt.bar(neuroacti, acc)
+EXP.NO: 1
+DATE:
+
+ ACCURACY OF VARIOUS ACTIVATION FUNCTIONS
+# Add titles and labels
+plt.title('Accuracy of models (Fashion MNIST)')
+plt.xlabel('Models')
+plt.ylabel('Accuracy')
+plt.ylim(85.0, 90.0)
+# Display the bar graph
+plt.show()
+---------------------------------------------------------------------------------------------------------------------------EXP  2---------
+import numpy as np
+import matplotlib.pyplot as plt
+from keras.models import Sequential
+from keras.layers import Dense
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Normalize the input features
+X_train = X_train / X_train.max(axis=0)
+X_test = X_test / X_test.max(axis=0)
+EXP.NO: 2
+DATE:
+
+ MLP NEUTRAL NETWORK TO SOLVE THE XOR PROBLEM
+# One-hot encode the labels
+encoder = LabelEncoder()
+y_train = encoder.fit_transform(y_train)
+y_test = encoder.transform(y_test)
+# Build the model
+model = Sequential()
+model.add(Dense(8, input_dim=4, activation='relu')) # Hidden layer with 8 neurons
+model.add(Dense(3, activation='softmax')) # Output layer with 3 neurons (for 3 classes)
+# Compile the model
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+# Train the model
+history = model.fit(X_train, y_train, epochs=100, verbose=0, validation_data=(X_test, y_test))
+# Evaluate the model
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f'Accuracy: {accuracy * 100}%')
+# Make predictions
+predictions = model.predict(X_test)
+predicted_classes = np.argmax(predictions, axis=1)
+print('Predicted Classes:', predicted_classes)
+# Plotting the loss over epochs
+plt.figure(figsize=(12, 6))
+# Loss Plot
+plt.plot(history.history['loss'], label='Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Model Loss over Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+# Show the plot
+plt.show()
+# Visualizing predictions (scatter plot of the first two features and their predicted class)
+plt.figure(figsize=(8, 6))
+# Scatter plot of the first two features and their predicted class
+for i, point in enumerate(X_test):
+plt.scatter(point[0], point[1], color=['red', 'blue', 'green'][predicted_classes[i]], s=100)
+plt.text(point[0], point[1], f'Pred: {predicted_classes[i]}', fontsize=12, ha='center')
+plt.title('Iris Test Set Predictions')
+plt.xlabel('Sepal Length')
+plt.ylabel('Sepal Width')
+plt.grid(True)
+plt.show()
+-------------------------------------------------------------------------------------------------------EXP  3-----------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.layers import Dense, Flatten
+from keras.utils import to_categorical
+# Load the MNIST dataset
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+# Normalize the pixel values to be between 0 and 1
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+# Convert labels to one-hot encoded format
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+# Create the model
+model = Sequential()
+# Flatten the input image
+model.add(Flatten(input_shape=(28, 28)))
+# Hidden layer with 128 neurons and ReLU activation
+model.add(Dense(128, activation='relu'))
+# Output layer with 10 neurons (one for each digit) and softmax activation
+model.add(Dense(10, activation='softmax'))
+# Compile the model
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+# Train the model and store the history
+history = model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test))
+# Evaluate the model
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f'Accuracy: {accuracy * 100}%')
+# Predictions
+predictions = model.predict(X_test)
+# Convert predictions to class labels
+predicted_classes = np.argmax(predictions, axis=1)
+print('Predicted Classes:', predicted_classes)
+# Plotting the accuracy and loss graph
+plt.figure(figsize=(12, 6))
+# Accuracy Plot
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Training and Validation Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+# Loss Plot
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Training and Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+# Show the plots
+plt.tight_layout()
+plt.show()
+# Visualizing predictions for the first 10 images
+n = 10
+plt.figure(figsize=(20, 4))
+for i in range(n):
+# Display original image
+ax = plt.subplot(2, n, i + 1)
+plt.imshow(X_test[i], cmap='gray')
+ax.get_xaxis().set_visible(False)
+ax.get_yaxis().set_visible(False)
+# Display predicted label
+ax = plt.subplot(2, n, i + 1 + n)
+plt.imshow(X_test[i], cmap='gray')
+ax.get_xaxis().set_visible(False)
+ ax.get_yaxis().set_visible(False)
+plt.title(f'Pred: {predicted_classes[i]}')
+plt.show()
+------------------------------------------------------------------------------------------------------EXP    4---------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+from keras.models import Model
+from keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D
+from keras.datasets import cifar10
+# Load and Preprocess the Dataset
+(X_train, _), (X_test, _) = cifar10.load_data()
+# Normalize the pixel values to be between 0 and 1
+X_train = X_train.astype('float32') / 255.0
+X_test = X_test.astype('float32') / 255.0
+# Reshape the data to include the channel dimension (CIFAR-10 images are 32x32 with 3
+channels)
+X_train = np.reshape(X_train, (len(X_train), 32, 32, 3))
+X_test = np.reshape(X_test, (len(X_test), 32, 32, 3))
+input_img = Input(shape=(32, 32, 3))
+# Encoder
+x = Conv2D(16, (3, 3), activation='relu', padding='same')(input_img)
+x = MaxPooling2D((2, 2), padding='same')(x)
+x = Conv2D(8, (3, 3), activation='relu', padding='same')(x)
+encoded = MaxPooling2D((2, 2), padding='same')(x)
+# Decoder
+x = Conv2D(8, (3, 3), activation='relu', padding='same')(encoded)
+x = UpSampling2D((2, 2))(x)
+EXP.NO: 4
+DATE:
+
+PROGRAM USING AUTOENCODERS TO ANALYZE IMAGES FOR
+IMAGE RECONSTRUCTION TASKS
+x = Conv2D(16, (3, 3), activation='relu', padding='same')(x)
+x = UpSampling2D((2, 2))(x)
+decoded = Conv2D(3, (3, 3), activation='sigmoid', padding='same')(x)
+# Autoencoder Model
+autoencoder = Model(input_img, decoded)
+autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
+# Train the autoencoder
+autoencoder.fit(X_train, X_train, epochs=5, batch_size=256, shuffle=True, validation_data=(X_test,
+X_test))
+# Predict the reconstructed images
+decoded_imgs = autoencoder.predict(X_test)
+# Plot the original and reconstructed images
+n = 10
+plt.figure(figsize=(20, 4))
+for i in range(n):
+# Display original
+ax = plt.subplot(2, n, i + 1)
+plt.imshow(X_test[i])
+ax.get_xaxis().set_visible(False)
+ax.get_yaxis().set_visible(False)
+# Display reconstruction
+ax = plt.subplot(2, n, i + 1 + n)
+plt.imshow(decoded_imgs[i])
+ax.get_xaxis().set_visible(False)
+ax.get_yaxis().set_visible(False)
+plt.show()
+-----------------------------------------------------------------------------------------------------EXP   5------------------------------
+import tensorflow as tf
+import numpy as np
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.utils import to_categorical
+def generate_dummy_data(num_samples=1000, input_length=16000, num_classes=10):
+X = np.random.rand(num_samples, input_length, 1)
+y = np.random.randint(0, num_classes, num_samples)
+y = to_categorical(y, num_classes=num_classes)
+return X, y
+def build_cnn_model(input_shape, num_classes):
+model = tf.keras.Sequential([
+tf.keras.layers.InputLayer(input_shape=input_shape),
+tf.keras.layers.Conv1D(32, kernel_size=3, activation='relu'),
+tf.keras.layers.MaxPooling1D(pool_size=2),
+tf.keras.layers.BatchNormalization(),
+tf.keras.layers.Conv1D(64, kernel_size=3, activation='relu'),
+tf.keras.layers.MaxPooling1D(pool_size=2),
+tf.keras.layers.BatchNormalization(),
+tf.keras.layers.Flatten(),
+tf.keras.layers.Dense(128, activation='relu'),
+tf.keras.layers.Dropout(0.5),
+tf.keras.layers.Dense(num_classes, activation='softmax')
+])
+return model
+num_samples = 1000
+EXP.NO: 5
+DATE:
+
+CONVOLUTIONAL NEURAL NETWORK (CNN) FOR SPEECH
+RECOGNITION
+input_length = 16000
+num_classes = 10
+X, y = generate_dummy_data(num_samples, input_length, num_classes)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+input_shape = (input_length, 1)
+model = build_cnn_model(input_shape=input_shape, num_classes=num_classes)
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+epochs = 10
+batch_size = 32
+print("Training the model...")
+history = model.fit(X_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size)
+print("Evaluating the model...")
+test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=2)
+print(f"Test Accuracy: {test_accuracy * 100:.2f}%")
+print("Making predictions on test data...")
+predictions = model.predict(X_test)
+predicted_classes = np.argmax(predictions, axis=1)
+print("First 10 Predictions:")
+print(predicted_classes[:10])
+-----------------------------------------------------------------------------------------------------EXP   6-----------------------------
+import os
+import cv2
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+dataset_dir = "traffic_signs_dataset"  
+classes = ["STOP", "SPEED_LIMIT_50", "NO_ENTRY"]
+num_classes = len(classes)
+img_size = (64, 64)
+
+X, y = [], []
+
+for label, sign in enumerate(classes):
+    sign_dir = os.path.join(dataset_dir, sign)
+    for img_file in os.listdir(sign_dir):
+        img_path = os.path.join(sign_dir, img_file)
+        img = cv2.imread(img_path)
+        img = cv2.resize(img, img_size)
+        X.append(img)
+        y.append(label)
+
+X = np.array(X) / 255.0  
+y = keras.utils.to_categorical(y, num_classes)  
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = keras.Sequential([
+    layers.Conv2D(32, (3,3), activation='relu', input_shape=(64, 64, 3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64, (3,3), activation='relu'),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(128, (3,3), activation='relu'),
+    layers.MaxPooling2D((2,2)),
+    layers.Flatten(),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(num_classes, activation='softmax')
+])
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+history = model.fit(X_train, y_train, epochs=10, validation_data=(X_test, y_test), batch_size=32)
+
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f"Test Accuracy: {test_acc:.4f}")
+
+model.save("traffic_sign_cnn.h5")
+
+plt.plot(history.history['accuracy'], label='Train Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.show()
+
+
+PREDICTION CODE:
+
+import cv2
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+model = load_model("traffic_sign_cnn.h5")
+classes = ["STOP", "SPEED_LIMIT_50", "NO_ENTRY"]
+def preprocess_image(image_path):
+    img_size = (64, 64)
+    img = cv2.imread(image_path)
+    img = cv2.resize(img, img_size)
+    img = img / 255.0  
+    img = np.expand_dims(img, axis=0)  
+    return img
+
+def predict_traffic_sign(image_path):
+    img = preprocess_image(image_path)
+    predictions = model.predict(img)
+    predicted_class = np.argmax(predictions)  
+    sign_name = classes[predicted_class]
+    
+    print(f"Predicted Traffic Sign: {sign_name}")
+test_image_path = "E:\Lab Manuals\DEEP LEARNING\stop sign.jpg"  
+predict_traffic_sign(test_image_path)
+--------------------------------------------------------------------------------------------------EXP 7--------------------------------import os
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv1D, LSTM, Dense, Flatten, Dropout, MaxPooling1D
+from tensorflow.keras.utils import to_categorical
+
+def load_data(filepath):
+    return np.genfromtxt(filepath, delimiter=None)  
+
+dataset_path = r"E:\Lab Manuals\DEEP LEARNING\UCI HAR Dataset\\"  
+
+X_train = load_data(dataset_path + "train\\X_train.txt")
+y_train = load_data(dataset_path + "train\\y_train.txt")
+
+X_test = load_data(dataset_path + "test\\X_test.txt")
+y_test = load_data(dataset_path + "test\\y_test.txt")
+
+print("X_train original shape:", X_train.shape)
+print("X_test original shape:", X_test.shape)
+
+X_train = X_train / np.max(X_train)
+X_test = X_test / np.max(X_test)
+
+y_train = to_categorical(y_train - 1, num_classes=6)  
+y_test = to_categorical(y_test - 1, num_classes=6)
+
+try:
+    X_train = X_train.reshape(X_train.shape[0], 561, 1)
+    X_test = X_test.reshape(X_test.shape[0], 561, 1)
+except ValueError as e:
+    print("Reshape error:", e)
+    exit()
+
+model = Sequential([
+    Conv1D(filters=64, kernel_size=3, activation='relu', input_shape=(561, 1)),
+
+    MaxPooling1D(pool_size=2),
+    LSTM(100, return_sequences=True),
+    LSTM(100),
+    Dropout(0.5),
+    Dense(100, activation='relu'),
+    Dense(6, activation='softmax') 
+])
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+history = model.fit(X_train, y_train, epochs=20, batch_size=64, validation_data=(X_test, y_test))
+
+loss, accuracy = model.evaluate(X_test, y_test)
+print(f"Test Accuracy: {accuracy:.4f}")
+
+model.save("har_model.h5")
+print("Model saved successfully!")
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from tensorflow.keras.models import load_model
+from sklearn.metrics import confusion_matrix, classification_report
+model = load_model("har_model.h5")
+print("Model loaded successfully!")
+def load_data(filepath):
+    return np.genfromtxt(filepath, delimiter=None)
+dataset_path = r"E:\Lab Manuals\DEEP LEARNING\UCI HAR Dataset\\"
+X_test = load_data(dataset_path + "test\\X_test.txt")
+y_test = load_data(dataset_path + "test\\y_test.txt")
+
+X_test = X_test / np.max(X_test)
+y_test = y_test - 1  
+X_test = X_test.reshape(X_test.shape[0], 561, 1)
+from tensorflow.keras.utils import to_categorical
+y_test_categorical = to_categorical(y_test, num_classes=6)
+index = np.random.randint(0, X_test.shape[0])  
+sample = X_test[index].reshape(1, 561, 1)  
+prediction = model.predict(sample)
+predicted_class = np.argmax(prediction) + 1  
+actual_class = y_test[index] + 1  
+print(f"Predicted Class: {predicted_class}")
+print(f"Actual Class: {actual_class}")
+plt.figure(figsize=(8, 5))
+plt.bar(range(1, 7), prediction[0], color=['blue', 'green', 'red', 'purple', 'orange', 'cyan'])
+plt.xlabel("Activity Class")
+plt.ylabel("Probability")
+plt.title(f"Predicted vs Actual: {predicted_class} vs {actual_class}")
+plt.xticks(range(1, 7))
+plt.ylim(0, 1)
+plt.show()
+y_pred = model.predict(X_test)
+y_pred_classes = np.argmax(y_pred, axis=1)
+y_true = y_test  
+cm = confusion_matrix(y_true, y_pred_classes)
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=range(1, 7), yticklabels=range(1, 7))
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix')
+plt.show()
+print("Classification Report:\n", classification_report(y_true, y_pred_classes))
+custom_sample = np.random.rand(561).reshape(1, 561, 1)  
+custom_prediction = model.predict(custom_sample)
+custom_class = np.argmax(custom_prediction) + 1
+print(f"Predicted Class for Custom Input: {custom_class}")
+---------------------------------------------------------------------------------------------EXP 8---------------------------------------
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from xgboost import XGBClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from imblearn.over_sampling import SMOTE
+from sklearn.metrics import roc_curve, auc, precision_recall_curve
+df = pd.read_csv("creditcard.csv")
+df.drop(columns=["Time"], inplace=True)
+X = df.drop(columns=["Class"])
+y = df["Class"]
+scaler = StandardScaler()
+X["Amount"] = scaler.fit_transform(X[["Amount"]])
+X_scaled = scaler.fit_transform(X)
+smote = SMOTE(sampling_strategy=0.2, random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X_scaled, y)
+X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
+model = XGBClassifier(n_estimators=200, learning_rate=0.1, random_state=42)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print("\n🔹 Model Evaluation 🔹")
+print("Accuracy Score:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+fpr, tpr, _ = roc_curve(y_test, y_pred)
+roc_auc = auc(fpr, tpr)
+plt.figure(figsize=(6, 4))
+plt.plot(fpr, tpr, color="blue", lw=2, label=f"ROC curve (AUC = {roc_auc:.2f})")
+plt.plot([0, 1], [0, 1], color="gray", linestyle="--")
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve")
+plt.legend(loc="lower right")
+plt.show()
+precision, recall, _ = precision_recall_curve(y_test, y_pred)
+plt.figure(figsize=(6, 4))
+plt.plot(recall, precision, color="green", lw=2)
+plt.xlabel("Recall")
+plt.ylabel("Precision")
+plt.title("Precision-Recall Curve")
+plt.show()
+--------------------------------------------------------------------------------------------------EXP   9---------------------------------
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+import os
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+img_path = "stop sign.jpg"  
+img = cv2.imread(img_path)
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  
+img = cv2.resize(img, (224, 224))  
+img_array = np.expand_dims(img, axis=0)  
+datagen = ImageDataGenerator(
+    rotation_range=30,       # Rotate image up to 30 degrees
+    width_shift_range=0.2,   # Horizontal shift by 20%
+    height_shift_range=0.2,  # Vertical shift by 20%
+    shear_range=0.2,         # Shear transformation
+    zoom_range=0.2,          # Zoom in/out by 20%
+    horizontal_flip=True,    # Flip horizontally
+    fill_mode="nearest"      # Fill missing pixels
+)
+
+aug_iter = datagen.flow(img_array, batch_size=1)
+
+plt.figure(figsize=(10, 5))
+for i in range(6):  
+    plt.subplot(2, 3, i+1)
+    batch = next(aug_iter)  
+    plt.imshow(batch[0].astype("uint8"))  #
+    plt.axis("off")
+plt.show()
+------------------------------------------------------------------------------------------------EXP     10-----------------------------
+import pandas as pd
+import numpy as np
+import re
+import spacy
+import matplotlib.pyplot as plt
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+nlp = spacy.load("en_core_web_sm")
+df = pd.read_csv("sentiment_dataset_fixed.csv")
+def clean_text(text):
+    """Cleans the text by removing URLs, mentions, hashtags, and special characters."""
+    if not isinstance(text, str):  
+        return ""
+    text = text.lower()
+    text = re.sub(r'http\S+', '', text)  
+    text = re.sub(r'@\w+', '', text)  
+    text = re.sub(r'#\w+', '', text)  
+    text = re.sub(r'[^a-zA-Z\s]', '', text)  
+    return text
+df["text"] = df["text"].astype(str)  
+df["clean_text"] = df["text"].apply(clean_text)  
+def preprocess_text(text):
+    """Tokenizes text and removes stopwords."""
+    doc = nlp(text)
+    tokens = [token.lemma_ for token in doc if token.is_alpha and not token.is_stop]
+    return " ".join(tokens)
+df["processed_text"] = df["clean_text"].apply(preprocess_text)
+valid_sentiments = ["negative", "neutral", "positive"]
+df = df[df["sentiment"].isin(valid_sentiments)]  
+sentiment_mapping = {"negative": 0, "neutral": 1, "positive": 2}
+df["sentiment"] = df["sentiment"].map(sentiment_mapping).astype(int)
+df = df.dropna(subset=["processed_text"]) 
+df = df[df["processed_text"].str.strip().astype(bool)]
+X = df["processed_text"]
+y = df["sentiment"]
+print(f"Dataset Size Before Split: {len(df)}")
+if len(X) == 0 or len(y) == 0:
+    raise ValueError("No valid data available for training!")
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+vectorizer = TfidfVectorizer(max_features=5000)
+X_train_tfidf = vectorizer.fit_transform(X_train)
+X_test_tfidf = vectorizer.transform(X_test)
+model = LogisticRegression(max_iter=500, multi_class="multinomial", solver="lbfgs")
+model.fit(X_train_tfidf, y_train)
+y_pred = model.predict(X_test_tfidf)
+print("\n🔹 Model Evaluation 🔹")
+print("Accuracy Score:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+plt.figure(figsize=(6, 4))
+df["sentiment"].value_counts().reindex([0, 1, 2], fill_value=0).plot(kind="bar", color=["red", "blue", "green"])
+plt.xlabel("Sentiment")
+plt.ylabel("Tweet Count")
+plt.title("Sentiment Distribution")
+plt.xticks(ticks=[0, 1, 2], labels=["Negative", "Neutral", "Positive"], rotation=0)
+plt.show()
+------------------------------------------------------------------------------------------------------------------------------------------
