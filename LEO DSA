@@ -104,7 +104,7 @@ plt.xlabel('Sepal Length')
 plt.ylabel('Sepal Width')
 plt.grid(True)
 plt.show()
--------------------------------------------------------------------------------------------------------EXP  3-----------------------------
+--------------------------------------------------------------------------------ANN TO RECOGNIZE CHARACHTERS-------EXP  3-----------------------------
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.datasets import mnist
@@ -176,7 +176,7 @@ ax.get_xaxis().set_visible(False)
  ax.get_yaxis().set_visible(False)
 plt.title(f'Pred: {predicted_classes[i]}')
 plt.show()
-------------------------------------------------------------------------------------------------------EXP    4---------------------------
+---------------------------------------------------------------------XRAY IMGAES FOR ANOMOLY DETECTION-----------------EXP    4---------------------------
 import numpy as np
 import matplotlib.pyplot as plt
 from keras.models import Model
@@ -231,7 +231,7 @@ plt.imshow(decoded_imgs[i])
 ax.get_xaxis().set_visible(False)
 ax.get_yaxis().set_visible(False)
 plt.show()
------------------------------------------------------------------------------------------------------EXP   5------------------------------
+-------------------------------------------------------------------SPEECH RECOGNITION------------------------EXP   5------------------------------
 import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -281,7 +281,7 @@ predictions = model.predict(X_test)
 predicted_classes = np.argmax(predictions, axis=1)
 print("First 10 Predictions:")
 print(predicted_classes[:10])
------------------------------------------------------------------------------------------------------EXP   6-----------------------------
+-------------------------------------------------------------CNN TO CLASSIFY OBJECTS--------------------------EXP   6-----------------------------
 import os
 import cv2
 import numpy as np
@@ -365,7 +365,8 @@ def predict_traffic_sign(image_path):
     print(f"Predicted Traffic Sign: {sign_name}")
 test_image_path = "E:\Lab Manuals\DEEP LEARNING\stop sign.jpg"  
 predict_traffic_sign(test_image_path)
---------------------------------------------------------------------------------------------------EXP 7--------------------------------import os
+------------------------------------------------------VIDEO BASED ACTIVITY RECOGNITION--------------------------EXP 7--------------------------------
+import os
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
@@ -468,7 +469,7 @@ custom_sample = np.random.rand(561).reshape(1, 561, 1)
 custom_prediction = model.predict(custom_sample)
 custom_class = np.argmax(custom_prediction) + 1
 print(f"Predicted Class for Custom Input: {custom_class}")
----------------------------------------------------------------------------------------------EXP 8---------------------------------------
+-----------------------------------------------------SHARE MARKET TRANSACTIONS---------------------EXP 8---------------------------------------
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -513,7 +514,7 @@ plt.xlabel("Recall")
 plt.ylabel("Precision")
 plt.title("Precision-Recall Curve")
 plt.show()
---------------------------------------------------------------------------------------------------EXP   9---------------------------------
+---------------------------------------------------------------BOLTZMAN MACHINE----------------EXP   9---------------------------------
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
@@ -545,7 +546,7 @@ for i in range(6):
     plt.imshow(batch[0].astype("uint8"))  #
     plt.axis("off")
 plt.show()
-------------------------------------------------------------------------------------------------EXP     10-----------------------------
+-----------------------------------------------------------------LSTM FOR SENTIMENT ANALYSIS----------------EXP     10-----------------------------
 import pandas as pd
 import numpy as np
 import re
